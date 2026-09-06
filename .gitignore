@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+instance/
+.pytest_cache/
+
+# Env
+.env
+.env.local
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Editors / OS
+.vscode/
+.DS_Store
+Thumbs.db
+
+# DB
+*.sqlite3
+*.db
+
+# Markdown — keep only README.md tracked
+*.md
+!README.md
