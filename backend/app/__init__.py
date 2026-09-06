@@ -23,7 +23,7 @@ def create_app(config_class=Config):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return models.User.query.get(user_id)
+        return db.session.get(models.User, user_id)
 
     from .csrf import enforce_csrf
 
@@ -45,7 +45,23 @@ def create_app(config_class=Config):
     register_error_handlers(app)
 
     from .auth import auth_bp
+    from .projects import projects_bp
+    from .invites import invites_bp
+    from .members import members_bp
+    from .issues import issues_bp
+    from .comments import comments_bp
+    from .activity import activity_bp
+    from .notifications import notifications_bp
+    from .resources import resources_bp
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(projects_bp)
+    app.register_blueprint(invites_bp)
+    app.register_blueprint(members_bp)
+    app.register_blueprint(issues_bp)
+    app.register_blueprint(comments_bp)
+    app.register_blueprint(activity_bp)
+    app.register_blueprint(notifications_bp)
+    app.register_blueprint(resources_bp)
 
     return app
