@@ -3,6 +3,7 @@ from datetime import datetime
 from flask import Blueprint, jsonify, request
 from flask_login import current_user, login_required
 from marshmallow import Schema, ValidationError, fields, validate
+from sqlalchemy import text
 
 from .authz import get_membership_or_404
 from .errors import ApiError
@@ -77,6 +78,24 @@ def _notify_decision(project_id, issue_id):
         )
 
 
+def assign_issue_number(project_id):
+    """Database.md §2: atomic PROJECT.next_issue_number increment, never
+    a MAX(number)+1 read — that races under concurrent creates on the
+    same project. Commits immediately so the row lock is held only for
+    this one statement, not the rest of the request.
+    """
+    result = db.session.execute(
+        text(
+            "UPDATE project SET next_issue_number = next_issue_number + 1 "
+            "WHERE id = :pid RETURNING next_issue_number - 1"
+        ),
+        {"pid": project_id},
+    )
+    number = result.scalar_one()
+    db.session.commit()
+    return number
+
+
 def _get_issue_or_404(issue_id):
     issue = db.session.get(Issue, issue_id)
     if issue is None:
@@ -144,8 +163,11 @@ def create_issue(project_id):
     ).first() is None:
         raise ApiError("invalid_request", "Assignee is not a project member.", 400)
 
+    number = assign_issue_number(project_id)
+
     issue = Issue(
         project_id=project_id,
+        number=number,
         title=data["title"],
         description=data["description"],
         category=data["category"],
