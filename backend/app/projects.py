@@ -84,7 +84,7 @@ def create_project():
 @projects_bp.get("/<project_id>")
 @login_required
 def get_project(project_id):
-    get_membership_or_404(current_user.id, project_id)
+    membership = get_membership_or_404(current_user.id, project_id)
     project = db.session.get(Project, project_id)
     if project is None:
         raise ApiError("not_found", "Resource not found.", 404)
@@ -133,6 +133,7 @@ def get_project(project_id):
             "folders": folder_payload,
             "top_level_resources": [resource_dict(r) for r in top_level_resources],
             "latest_issues": [issue_dict(i) for i in latest_issues],
+            "membership": membership_dict(membership),
         }
     )
 
