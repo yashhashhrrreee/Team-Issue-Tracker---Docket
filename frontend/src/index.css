@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #ffffff;
+  --color-paper-raised: #eef1f6;
+  --color-ink: #1c2b4a;
+  --color-ink-soft: #5b6b85;
+  --color-rule: #c9d2de;
+  --color-red: #b3352b;
+  --color-blue: #2c4a7c;
+  --color-blue-light: #7c93b3;
+
+  --font-heading: "Fraunces", ui-serif, Georgia, serif;
+  --font-body: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Minimal Vintage: no rounded corners anywhere. */
+  --radius-none: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-full: 0px;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
