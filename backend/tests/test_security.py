@@ -1,7 +1,7 @@
 """Security.md — access control and injection defenses.
 
 Membership-gate coverage is parametrized across every project-scoped and
-issue-scoped route that goes through get_membership_or_404 — 17 routes.
+issue-scoped route that goes through get_membership_or_404 — 18 routes.
 This is deliberately NOT every route in the API: /api/auth/*, POST
 /api/projects (create), GET /api/projects (list-my-own), POST
 /api/invites/accept, and /api/notifications/* are excluded, matching
@@ -18,6 +18,7 @@ GATED_ROUTES = [
     ("PATCH", "/api/projects/{project_id}"),
     ("PATCH", "/api/projects/{project_id}/membership"),
     ("POST", "/api/projects/{project_id}/invites"),
+    ("GET", "/api/projects/{project_id}/invites"),
     ("GET", "/api/projects/{project_id}/issues"),
     ("POST", "/api/projects/{project_id}/issues"),
     ("GET", "/api/projects/{project_id}/members"),
@@ -102,6 +103,27 @@ def test_invalid_enum_value_rejected_on_issue_create(client, base_fixtures):
         headers=csrf_header(client),
     )
     assert resp.status_code == 400
+
+
+def test_invite_list_never_returns_token(client, base_fixtures):
+    _login(client, "alice")
+    project_id = base_fixtures["project_id"]
+
+    created = client.post(
+        f"/api/projects/{project_id}/invites",
+        json={"email": "frank@example.com", "role": "Developer"},
+        headers=csrf_header(client),
+    )
+    assert created.status_code == 201
+    assert "token" in created.get_json()  # the creator still gets it once, at creation
+
+    listed = client.get(f"/api/projects/{project_id}/invites")
+    assert listed.status_code == 200
+    invites = listed.get_json()
+    assert len(invites) >= 1
+    for invite in invites:
+        assert "token" not in invite, f"token field present in list response: {invite}"
+        assert invite["email"] == "frank@example.com"
 
 
 def test_injection_style_title_stored_as_inert_literal(app, client, base_fixtures):
