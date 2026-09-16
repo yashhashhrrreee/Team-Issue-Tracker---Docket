@@ -1,5 +1,9 @@
 def iso(dt):
-    return dt.isoformat() if dt is not None else None
+    # All timestamps are naive datetime.utcnow() values (Database.md's
+    # convention) — isoformat() alone omits the UTC marker, so a browser's
+    # `new Date(...)` misparses the string as local time instead of UTC,
+    # silently corrupting every relative-time display by the local offset.
+    return dt.isoformat() + "Z" if dt is not None else None
 
 
 def user_public(user):
@@ -32,6 +36,7 @@ def issue_dict(issue):
     return {
         "id": issue.id,
         "project_id": issue.project_id,
+        "number": issue.number,
         "title": issue.title,
         "description": issue.description,
         "category": issue.category,
