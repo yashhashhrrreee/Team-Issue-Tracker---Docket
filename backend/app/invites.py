@@ -96,6 +96,11 @@ def accept_invite():
         raise invalid
     if invite.expires_at < datetime.utcnow():
         raise invalid
+    # Security.md §7: token+email matching the INVITE row proves the
+    # caller *possesses* those two values, not that they *are* the
+    # invitee — bind acceptance to the authenticated account's own email.
+    if current_user.email.lower() != invite.email.lower():
+        raise invalid
 
     existing = ProjectMembership.query.filter_by(
         user_id=current_user.id, project_id=invite.project_id
