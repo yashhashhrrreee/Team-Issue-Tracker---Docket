@@ -102,6 +102,29 @@ def test_accept_rejects_expired_invite_with_correct_token_and_email(
     assert resp.get_json()["error"]["code"] == "invalid_invite"
 
 
+# Testing.md #23: token+email correctly identify a Pending invite, but the
+# currently-authenticated account's own email doesn't match invite.email —
+# rejected the same as every other failure mode, distinct from #8 (which is
+# about the token+email pair itself not matching any row).
+def test_accept_rejects_when_authenticated_user_email_does_not_match_invite(
+    client, base_fixtures, user_factory
+):
+    _login(client, "alice")
+    invite = _create_invite(client, base_fixtures["project_id"], email="dave@example.com")
+
+    # erin is a real, logged-in user — and submits dave's actual token+email,
+    # which does correctly identify the invite. Only erin's own account
+    # email fails to match.
+    user_factory("erin", "erin@example.com")
+    resp = client.post(
+        "/api/invites/accept",
+        json={"token": invite["token"], "email": "dave@example.com"},
+        headers=csrf_header(client),
+    )
+    assert resp.status_code == 400
+    assert resp.get_json()["error"]["code"] == "invalid_invite"
+
+
 def test_accept_succeeds_with_correct_token_and_email(client, base_fixtures, user_factory):
     _login(client, "alice")
     invite = _create_invite(client, base_fixtures["project_id"], email="dave@example.com", role=Role.LEADER)
