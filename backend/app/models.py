@@ -105,6 +105,7 @@ class Project(db.Model):
     name = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=True)
     key = db.Column(db.String(20), nullable=False)
+    next_issue_number = db.Column(db.Integer, nullable=False, default=1)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
 
@@ -134,10 +135,12 @@ class Issue(db.Model):
         db.Index("ix_issue_reporter_id", "reporter_id"),
         db.Index("ix_issue_priority", "priority"),
         db.Index("ix_issue_category", "category"),
+        db.UniqueConstraint("project_id", "number", name="uq_issue_project_number"),
     )
 
     id = db.Column(db.String(36), primary_key=True, default=gen_uuid)
     project_id = db.Column(db.String(36), db.ForeignKey("project.id"), nullable=False)
+    number = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text, nullable=False)
     category = db.Column(db.String(20), nullable=False)
