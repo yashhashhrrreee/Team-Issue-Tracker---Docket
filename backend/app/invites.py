@@ -9,7 +9,7 @@ from .authz import get_membership_or_404
 from .errors import ApiError
 from .extensions import db
 from .models import Invite, InviteStatus, Project, ProjectMembership, Role
-from .serializers import invite_dict, membership_dict
+from .serializers import invite_dict, iso, membership_dict
 
 invites_bp = Blueprint("invites", __name__, url_prefix="/api")
 
@@ -50,6 +50,31 @@ def create_invite(project_id):
     db.session.add(invite)
     db.session.commit()
     return jsonify(invite_dict(invite)), 201
+
+
+@invites_bp.get("/projects/<project_id>/invites")
+@login_required
+def list_invites(project_id):
+    get_membership_or_404(current_user.id, project_id)
+
+    # Deliberately excludes `token` — Database.md's join-verification
+    # rule depends on a leaked email+token pair not being guessable
+    # together; every project member can already see the invited email
+    # here, so also exposing the token would let any member accept in
+    # that person's place.
+    invites = Invite.query.filter_by(project_id=project_id, status=InviteStatus.PENDING).all()
+    return jsonify(
+        [
+            {
+                "id": i.id,
+                "email": i.email,
+                "role": i.role,
+                "status": i.status,
+                "created_at": iso(i.created_at),
+            }
+            for i in invites
+        ]
+    )
 
 
 @invites_bp.post("/invites/accept")
