@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash
 from app import create_app
 from app.config import Config
 from app.extensions import db
+from app.issues import assign_issue_number
 from app.models import Issue, IssueCategory, IssuePriority, IssueStatus, Project, ProjectMembership, Role, User
 
 
@@ -95,6 +96,7 @@ def base_fixtures(app, client):
 
         issue = Issue(
             project_id=project.id,
+            number=assign_issue_number(project.id),
             title="Seed issue",
             description="Seed description.",
             category=IssueCategory.TECHNICAL,
