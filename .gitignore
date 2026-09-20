@@ -21,6 +21,9 @@ frontend/.vite/
 .DS_Store
 Thumbs.db
 
+# Stray duplicate project folder — not part of the repo
+Team Issue Tracker - Docket/
+
 # DB
 *.sqlite3
 *.db
