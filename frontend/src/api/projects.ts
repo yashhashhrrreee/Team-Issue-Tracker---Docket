@@ -47,6 +47,10 @@ export function getProject(projectId: string) {
   return apiFetch<ProjectDetail>(`/api/projects/${projectId}`);
 }
 
+export function updateProject(projectId: string, data: { name?: string; key?: string; description?: string }) {
+  return apiFetch<Project>(`/api/projects/${projectId}`, { method: "PATCH", body: data });
+}
+
 export function updateBoardViewPreference(projectId: string, board_view_preference: "tag" | "swimlane") {
   return apiFetch<ProjectMembership>(`/api/projects/${projectId}/membership`, {
     method: "PATCH",

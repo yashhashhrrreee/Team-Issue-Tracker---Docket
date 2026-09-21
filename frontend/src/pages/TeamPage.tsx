@@ -32,10 +32,14 @@ function AddMemberModal({ projectId, onClose }: { projectId: string; onClose: ()
 
         <div className="flex flex-col gap-[22px]">
           <div className="flex flex-col gap-2">
-            <label className="font-mono text-[11px] tracking-[0.08em] text-ink-soft uppercase">
+            <label
+              htmlFor="invite-email"
+              className="font-mono text-[11px] tracking-[0.08em] text-ink-soft uppercase"
+            >
               Email
             </label>
             <input
+              id="invite-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
