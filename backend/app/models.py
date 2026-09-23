@@ -68,6 +68,13 @@ class ResourceType:
     ALL = {LINK, FILE}
 
 
+class PasswordResetStatus:
+    PENDING = "Pending"
+    USED = "Used"
+    EXPIRED = "Expired"
+    ALL = {PENDING, USED, EXPIRED}
+
+
 class User(db.Model):
     __tablename__ = "user"
 
@@ -203,6 +210,18 @@ class Invite(db.Model):
     invited_by = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
     status = db.Column(db.String(20), nullable=False, default=InviteStatus.PENDING)
     token = db.Column(db.String(128), unique=True, nullable=False)
+    expires_at = db.Column(db.DateTime, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+
+
+class PasswordResetToken(db.Model):
+    __tablename__ = "password_reset_token"
+    __table_args__ = (db.Index("ix_password_reset_token_user_id", "user_id"),)
+
+    id = db.Column(db.String(36), primary_key=True, default=gen_uuid)
+    user_id = db.Column(db.String(36), db.ForeignKey("user.id"), nullable=False)
+    token = db.Column(db.String(128), unique=True, nullable=False)
+    status = db.Column(db.String(20), nullable=False, default=PasswordResetStatus.PENDING)
     expires_at = db.Column(db.DateTime, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
