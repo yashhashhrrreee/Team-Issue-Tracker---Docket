@@ -5,10 +5,16 @@ import type { Page } from "@playwright/test";
 // reusing the seeded alice/bob/carol/ROC fixture, so specs don't
 // interfere with each other's state when run in the same worker
 // against the same reset-once-per-suite database.
+// process.pid disambiguates across Playwright worker processes — Date.now()
+// alone can coincide between two workers on the same millisecond, and each
+// worker's counter starts fresh, so without pid two specs can generate the
+// same "unique" username and one registration fails with a 409 (see
+// Decisions.md — this took down 8/11 specs in one run before workers:1 and
+// this fix landed together).
 let counter = 0;
 export function unique(label: string) {
   counter += 1;
-  return `${label}${Date.now()}${counter}`;
+  return `${label}${process.pid}${Date.now()}${counter}`;
 }
 
 // Project keys are capped at 20 chars (Database.md) and read best short —
