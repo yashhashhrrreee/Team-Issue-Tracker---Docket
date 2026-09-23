@@ -4,6 +4,10 @@ export default defineConfig({
   testDir: "./e2e",
   globalSetup: "./e2e/global-setup.ts",
   fullyParallel: false, // shared seeded DB — parallel specs would race on the same rows
+  workers: 1, // fullyParallel:false only serializes tests *within* a file — different
+  // spec files still ran on separate workers against the same dev server/DB without
+  // this, which let two unique()-generated usernames collide across processes and
+  // took down 8/11 specs in one run (see Decisions.md).
   retries: 0,
   reporter: "list",
   use: {
