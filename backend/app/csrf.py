@@ -9,8 +9,17 @@ CSRF_HEADER_NAME = "X-CSRF-Token"
 
 # Security.md §4: double-submit cookie. Register/login are exempt because
 # the csrf_token cookie is only set *on* login — there's no session yet
-# for a forged request to ride on beforehand.
-_CSRF_EXEMPT_PATHS = {"/api/auth/register", "/api/auth/login"}
+# for a forged request to ride on beforehand. Forgot/reset-password are
+# exempt for the same reason: both are called by a signed-out visitor
+# with no session and no csrf_token cookie yet — unlike /auth/password
+# (change password), which requires an active session and is correctly
+# still CSRF-checked.
+_CSRF_EXEMPT_PATHS = {
+    "/api/auth/register",
+    "/api/auth/login",
+    "/api/auth/forgot-password",
+    "/api/auth/reset-password",
+}
 
 
 def generate_csrf_token():
