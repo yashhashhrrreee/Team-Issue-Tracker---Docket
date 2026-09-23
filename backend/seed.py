@@ -203,5 +203,11 @@ with app.app_context():
     )
 
     db.session.commit()
-    issue_count = Issue.query.filter_by(project_id=project.id).count()
-    print(f"Seeded: project={project.key} users=alice,bob,carol issues={issue_count}")
+    issue_numbers = (
+        Issue.query.filter_by(project_id=project.id)
+        .order_by(Issue.number)
+        .with_entities(Issue.number)
+        .all()
+    )
+    issue_ids = ",".join(f"{project.key}-{n}" for (n,) in issue_numbers)
+    print(f"Seeded: project={project.key} users=alice,bob,carol issues={issue_ids}")
