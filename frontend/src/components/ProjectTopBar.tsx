@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { me } from "../api/auth";
 import { BrandMark } from "./BrandMark";
 
@@ -35,9 +36,12 @@ export function ProjectTopBar({ projectName, projectKey, action }: ProjectTopBar
           )}
         </div>
         <div className="flex items-center gap-2.5 sm:gap-5">
-          <span className="hidden font-body text-sm text-ink-soft sm:inline">
+          <Link
+            to="/settings"
+            className="hidden font-body text-sm text-ink-soft hover:text-ink hover:underline sm:inline"
+          >
             {user?.username}
-          </span>
+          </Link>
           {action}
         </div>
       </header>
