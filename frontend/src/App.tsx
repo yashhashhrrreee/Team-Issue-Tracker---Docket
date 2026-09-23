@@ -4,6 +4,7 @@ import { BacklogPage } from "./pages/BacklogPage";
 import { BoardPage } from "./pages/BoardPage";
 import { ClosedTicketsPage } from "./pages/ClosedTicketsPage";
 import { ComponentsShowcase } from "./pages/ComponentsShowcase";
+import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { JoinProjectPage } from "./pages/JoinProjectPage";
 import { LoadingPage } from "./pages/LoadingPage";
 import { LoginPage } from "./pages/LoginPage";
@@ -15,6 +16,7 @@ import { ProjectHomePage } from "./pages/ProjectHomePage";
 import { ProjectsPage } from "./pages/ProjectsPage";
 import { RaiseTicketPage } from "./pages/RaiseTicketPage";
 import { RegisterPage } from "./pages/RegisterPage";
+import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { SolvedIssuesPage } from "./pages/SolvedIssuesPage";
 import { TeamPage } from "./pages/TeamPage";
@@ -31,6 +33,8 @@ export default function App() {
           <Route path="/" element={<LoadingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/dev/components" element={<ComponentsShowcase />} />
 
           <Route element={<RequireAuth />}>
