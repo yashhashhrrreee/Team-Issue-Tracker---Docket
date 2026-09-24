@@ -19,3 +19,24 @@ export function logout() {
 export function me() {
   return apiFetch<User>("/api/auth/me");
 }
+
+export function changePassword(currentPassword: string, newPassword: string) {
+  return apiFetch<{ ok: true }>("/api/auth/password", {
+    method: "POST",
+    body: { current_password: currentPassword, new_password: newPassword },
+  });
+}
+
+export function forgotPassword(email: string) {
+  return apiFetch<{ message: string }>("/api/auth/forgot-password", {
+    method: "POST",
+    body: { email },
+  });
+}
+
+export function resetPassword(token: string, newPassword: string) {
+  return apiFetch<{ ok: true }>("/api/auth/reset-password", {
+    method: "POST",
+    body: { token, new_password: newPassword },
+  });
+}
